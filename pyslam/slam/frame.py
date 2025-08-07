@@ -93,6 +93,7 @@ class FeatureTrackerShared:
         # for the following guys we need to store the images since they need them at each matching step
         if (FeatureTrackerShared.feature_matcher is not None and 
             (FeatureTrackerShared.feature_matcher.matcher_type == FeatureMatcherTypes.LIGHTGLUE or \
+             FeatureTrackerShared.feature_matcher.matcher_type == FeatureMatcherTypes.SUPERGLUE or \
              FeatureTrackerShared.feature_matcher.matcher_type == FeatureMatcherTypes.LOFTR)):
             Frame.is_store_imgs = True
     
@@ -389,6 +390,8 @@ class Frame(FrameBase):
         self.des_r     = None      # right keypoint descriptors                                     [NxD] where D is the descriptor length         
         self.depths    = None      # keypoint depths                                                [Nx1]
         self.kps_ur    = None      # corresponding right u-coordinates for left keypoints           [Nx1] (computed with stereo matching and assuming rectified stereo images)
+        self.scores = None      # scores for the keypoints (e.g. confidence scores, etc.)
+        self.scores_r = None    # scores for the right keypoints (e.g. confidence scores, etc.)
 
         # map points information arrays 
         self.points: list[MapPoint] | None = None     # map points => self.points[idx] (if is not None) is the map point matched with self.kps[idx]
@@ -445,6 +448,8 @@ class Frame(FrameBase):
             self.des_r     = frame_data_dict['des_r']
             self.depths    = frame_data_dict['depths']
             self.kps_ur    = frame_data_dict['kps_ur']
+            self.scores_r = frame_data_dict['scores_r']
+            self.scores    = frame_data_dict['scores']
             self.points    = frame_data_dict['points']
             self.outliers  = frame_data_dict['outliers']
             self.kf_ref = frame_data_dict['kf_ref']
@@ -471,8 +476,19 @@ class Frame(FrameBase):
                     with ThreadPoolExecutor() as executor:
                         future_l = executor.submit(detect_and_compute, img)
                         future_r = executor.submit(detect_and_compute, img_right, left=False)
-                        self.kps, self.des = future_l.result()
-                        self.kps_r, self.des_r = future_r.result()
+                        if str(FeatureTrackerShared.feature_manager.descriptor_type) == 'SUPERPOINT':
+                            # SuperPoint returns keypoints, descriptors and heatmap
+                            self.kps, self.des, self.scores = future_l.result()
+                            self.kps_r, self.des_r, self.scores_r = future_r.result()
+                            x= [int(point.pt[0]) for point in self.kps]
+                            y= [int(point.pt[1]) for point in self.kps]
+                            self.scores = self.scores[y,x]
+                            x_r= [int(point.pt[0]) for point in self.kps_r]
+                            y_r= [int(point.pt[1]) for point in self.kps_r]
+                            self.scores_r = self.scores_r[y_r,x_r]
+                        else:
+                            self.kps, self.des = future_l.result()
+                            self.kps_r, self.des_r = future_r.result()
                 else:
                     self.kps, self.des = FeatureTrackerShared.feature_tracker.detectAndCompute(img)
                     self.kps_r, self.des_r = FeatureTrackerShared.feature_tracker.detectAndCompute(img_right)
@@ -881,9 +897,15 @@ class Frame(FrameBase):
         min_disparity = 0
         max_disparity = self.camera.bf/min_z
         # we enforce matching on the same row here by using the flag row_matching (epipolar constraint)
-        row_matching = True
+        row_matching = False
         ratio_test = 0.9
-        stereo_matching_result = FeatureTrackerShared.feature_matcher.match(img, img_right, des1=self.des, des2=self.des_r, \
+        if str(FeatureTrackerShared.feature_tracker.matcher_type) == 'SUPERGLUE':
+            # SuperGlue matcher requires keypoints, scores and descriptors
+            stereo_matching_result = FeatureTrackerShared.feature_matcher.match(img, img_right, des1=self.des, des2=self.des_r, \
+                                                                   kps1=self.kps, kps2=self.kps_r, scores1=self.scores, scores2=self.scores_r, \
+                                                                   ratio_test=ratio_test, row_matching=row_matching, max_disparity=max_disparity)
+        else:
+            stereo_matching_result = FeatureTrackerShared.feature_matcher.match(img, img_right, des1=self.des, des2=self.des_r, \
                                                                    kps1=self.kps, kps2=self.kps_r, \
                                                                    ratio_test=ratio_test, row_matching=row_matching, max_disparity=max_disparity)
         if len(stereo_matching_result.idxs1)==0 or len(stereo_matching_result.idxs2)==0:
@@ -1228,7 +1250,7 @@ def are_map_points_visible(frame1: Frame, frame2: Frame, map_points1, sR21: np.n
 # match frames f1 and f2
 # out: a vector of match index pairs [idx1[i],idx2[i]] such that the keypoint f1.kps[idx1[i]] is matched with f2.kps[idx2[i]]
 def match_frames(f1: Frame, f2: Frame, ratio_test=None):     
-    matching_result = FeatureTrackerShared.feature_matcher.match(f1.img, f2.img, f1.des, f2.des, kps1=f1.kps, kps2=f2.kps, ratio_test=ratio_test)
+    matching_result = FeatureTrackerShared.feature_matcher.match(f1.img, f2.img, f1.des, f2.des, kps1=f1.kps, kps2=f2.kps,scores1=f1.scores, scores2=f2.scores, ratio_test=ratio_test)
     return matching_result
     # idxs1, idxs2 = matching_result.idxs1, matching_result.idxs2
     # idxs1 = np.asarray(idxs1)

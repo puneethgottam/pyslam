@@ -25,6 +25,7 @@ LIB_PATHS:
   # The following libs/modules are explicitely imported on demand from thirdparty folder by using:
   # import pyslam.config as config \ config.cfg.set_lib('tfeat')
   lightglue: thirdparty/LightGlue
+  superglue: thirdparty/SuperGluePretrainedNetwork
   xfeat: thirdparty/accelerated_features
   superpoint: thirdparty/superpoint
   hardnet: thirdparty/hardnet

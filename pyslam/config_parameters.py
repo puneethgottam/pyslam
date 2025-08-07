@@ -177,7 +177,7 @@ class Parameters:
 
     
     # Loop closing
-    kUseLoopClosing = True                                  # To enable/disable loop closing.
+    kUseLoopClosing = False                                 # To enable/disable loop closing.
     kMinDeltaFrameForMeaningfulLoopClosure = 10
     kMaxResultsForLoopClosure = 5
     kLoopDetectingTimeoutPopKeyframe = 0.5 # [s]

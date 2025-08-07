@@ -42,9 +42,11 @@ import pyslam.config as config
 config.cfg.set_lib('xfeat') 
 config.cfg.set_lib('lightglue')
 config.cfg.set_lib('mast3r')
+config.cfg.set_lib('superglue')
 
 XFeat = import_from('modules.xfeat', 'XFeat')
 LightGlue = import_from('lightglue', 'LightGlue')
+SuperGlue = import_from('models.superglue', 'SuperGlue')
 
 kScriptPath = os.path.realpath(__file__)
 kScriptFolder = os.path.dirname(kScriptPath)
@@ -66,6 +68,7 @@ class FeatureMatcherTypes(SerializableEnum):
     LIGHTGLUE = 5      # "LightGlue: Local Feature Matching at Light Speed"
     LOFTR     = 6      # "LoFTR: Efficient Local Feature Matching with Transformers" (based on kornia)
     MAST3R    = 7      # "Grounding Image Matching in 3D with MASt3R"
+    SUPERGLUE = 8      # "SuperGlue: Learning Feature Matching with Graph Neural Networks" (based on kornia)
 
 
 def feature_matcher_factory(norm_type=cv2.NORM_HAMMING, 
@@ -99,6 +102,13 @@ def feature_matcher_factory(norm_type=cv2.NORM_HAMMING,
                              other_data_dict=other_data_dict)
     elif matcher_type == FeatureMatcherTypes.LIGHTGLUE:
         return LightGlueMatcher(norm_type=norm_type, 
+                                cross_check=cross_check, 
+                                ratio_test=ratio_test, 
+                                matcher_type=matcher_type,
+                                detector_type=detector_type,
+                                descriptor_type=descriptor_type)
+    elif matcher_type == FeatureMatcherTypes.SUPERGLUE:
+        return SuperGlueMatcher(norm_type=norm_type, 
                                 cross_check=cross_check, 
                                 ratio_test=ratio_test, 
                                 matcher_type=matcher_type,
@@ -373,7 +383,7 @@ class FeatureMatcher:
                     
     # input: des1 = queryDescriptors, des2= trainDescriptors
     # output: idxs1, idxs2  (vectors of corresponding indexes in des1 and des2, respectively)
-    def match(self, img1, img2, des1, des2, kps1=None, kps2=None, ratio_test=None, 
+    def match(self, img1, img2, des1, des2, kps1=None, kps2=None, scores1=None, scores2=None, ratio_test=None, 
               row_matching=False, max_disparity=None, data=None):
                         
         result = FeatureMatchingResult()
@@ -448,6 +458,60 @@ class FeatureMatcher:
             #print(matches01['matches'])
             idxs0 = matches01['matches'][0][:, 0].cpu().tolist()
             idxs1 = matches01['matches'][0][:, 1].cpu().tolist()
+            result.idxs1 = np.array(idxs0)
+            result.idxs2 = np.array(idxs1)
+            if row_matching: 
+                result.idxs1, result.idxs2 = MatcherUtils.filterNonRowMatches(kps1, result.idxs1, kps2, result.idxs2, max_disparity=max_disparity)            
+            if kVerbose:
+                print(f'#result.idxs1: {result.idxs1.shape}, #result.idxs2: {result.idxs2.shape}')            
+            return result
+        # ===========================================================   
+        if self.matcher_type == FeatureMatcherTypes.SUPERGLUE:            
+            # TODO: add row epipolar check for row matching
+            scales1 = None
+            scales2 = None
+            oris1 = None 
+            oris2 = None
+            if kps1 is None and kps2 is None:
+                Printer.red('ERROR: FeatureMatcher.match: kps1 and kps2 are None')
+                return result
+            else: 
+                # convert from list of keypoints to an array of points if needed
+                if not isinstance(kps1, np.ndarray) or kps1.dtype != np.float32:
+                    if self.detector_type == FeatureDetectorTypes.LIGHTGLUESIFT:
+                        scales1 = np.array([x.size for x in kps1], dtype=np.float32)
+                        oris1 = np.array([x.angle for x in kps1], dtype=np.float32)
+                    #print(f'kps1: {kps1}')
+                    kps1 = np.array([x.pt for x in kps1], dtype=np.float32)
+                    if kVerbose:
+                        print('kps1.shape:',kps1.shape,' kps1.dtype:',kps1.dtype)
+                if not isinstance(kps2, np.ndarray) or kps2.dtype != np.float32:
+                    if self.detector_type == FeatureDetectorTypes.LIGHTGLUESIFT:                    
+                        scales2 = np.array([x.size for x in kps2], dtype=np.float32)
+                        oris2 = np.array([x.angle for x in kps2], dtype=np.float32)                    
+                    kps2 = np.array([x.pt for x in kps2], dtype=np.float32)
+                    if kVerbose: 
+                        print('kps2.shape:',kps2.shape,' kps2.dtype:',kps2.dtype)
+            if kVerbose:
+                print(f'image1.shape: {img1.shape}, image2.shape: {img2.shape}')     
+            data = { 
+                "image0": torch.tensor(img1.transpose((2, 0, 1)), device=self.torch_device).unsqueeze(0),  # HxWxC to CxHxW [None,:,:,:] ,
+                "image1":torch.tensor(img2.transpose((2, 0, 1)), device=self.torch_device).unsqueeze(0),
+                "keypoints0": torch.tensor(kps1, device=self.torch_device).unsqueeze(0),
+                "keypoints1": torch.tensor(kps2, device=self.torch_device).unsqueeze(0),
+                "descriptors0": torch.tensor(des1, device=self.torch_device).unsqueeze(0).permute(0, 2, 1),  # 1XNx256 to 1X256xN
+                "descriptors1": torch.tensor(des2, device=self.torch_device).unsqueeze(0).permute(0, 2, 1),  # 1XNx256 to 1X256xN
+                "scores0": torch.tensor(scores1, device=self.torch_device).unsqueeze(0),
+                "scores1": torch.tensor(scores2, device=self.torch_device).unsqueeze(0),
+            }   
+            # Printer.red(f'descriptors shapes: {torch.tensor(des1, device=self.torch_device).unsqueeze(0).shape}, {data["descriptors0"].shape}')
+            # Printer.orange(f'Keypoints shapes: {torch.tensor(kps1, device=self.torch_device).unsqueeze(0).shape}, scores shape: {torch.tensor(scores1, device=self.torch_device).unsqueeze(0).shape}')    
+            matches01 = self.matcher(data)
+            #print(matches01['matches'])
+            matches0 = matches01['matches0'][0].cpu().numpy() #IDs of kps2 matched to kps1, -1 where no match
+            valid_matches = matches0 > -1 #Mask where kps1 have valid matches in kps2
+            idxs0 = np.where(valid_matches)[0]
+            idxs1 = matches0[valid_matches]  # Get the indexes of valid matches in kps2
             result.idxs1 = np.array(idxs0)
             result.idxs2 = np.array(idxs1)
             if row_matching: 
@@ -721,7 +785,46 @@ class LightGlueMatcher(FeatureMatcher):
         print('device: ', self.torch_device)  
         Printer.green(f'matcher: {self.matcher_name}')
         
-
+# ==============================================================================
+class SuperGlueMatcher(FeatureMatcher):
+    def __init__(self, 
+                 norm_type=cv2.NORM_L2, 
+                 cross_check = False, 
+                 ratio_test=kDefaultRatioTest, 
+                 matcher_type = FeatureMatcherTypes.SUPERGLUE,
+                 detector_type=FeatureDetectorTypes.SUPERPOINT,
+                 descriptor_type=FeatureDescriptorTypes.NONE):
+        super().__init__(norm_type=norm_type, 
+                         cross_check=cross_check, 
+                         ratio_test=ratio_test, 
+                         matcher_type=matcher_type,
+                         detector_type=detector_type,
+                         descriptor_type=descriptor_type)
+        # device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        self.torch_device = device
+        # if self.torch_device == 'cuda':
+        #     LightGlue.pruning_keypoint_thresholds['cuda']      
+        features_string = None 
+        model_env = 'outdoor'  # 'indoor' or 'outdoor'
+        default_config = {
+        'descriptor_dim': 256,
+        'weights': model_env,   
+        'keypoint_encoder': [32, 64, 128, 256],
+        'GNN_layers': ['self', 'cross'] * 9,
+        'sinkhorn_iterations': 100,
+        'match_threshold': 0.05 
+        }
+        if detector_type == FeatureDetectorTypes.SUPERPOINT:
+            features_string = 'superpoint'           
+        elif detector_type == FeatureDetectorTypes.SIFT:
+            features_string = 'sift'                  
+        else:
+            raise ValueError(f'SuperGlue: Unmanaged detector type: {detector_type.name}')
+        self.matcher = SuperGlue(default_config).eval().to(device) 
+        self.matcher_name = 'SuperGlueFeatureMatcher'   
+        print('device: ', self.torch_device)  
+        Printer.green(f'matcher: {self.matcher_name}')
 # ==============================================================================
 class LoFTRMatcher(FeatureMatcher):
     def __init__(self, 

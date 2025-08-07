@@ -50,6 +50,7 @@ class FeatureTrackerTypes(SerializableEnum):
     LIGHTGLUE = 4   # LightGlue, "LightGlue: Local Feature Matching at Light Speed"
     LOFTR     = 5   # "LoFTR: Efficient Local Feature Matching with Transformers" (Detector-Free)
     MAST3R    = 6   # "Grounding Image Matching in 3D with MASt3R" (Detector-Free)
+    SUPERGLUE = 7   # "SuperGlue: Learning Feature Matching with Graph Neural Networks" (based on kornia)
 
 
 def feature_tracker_factory(num_features=kMinNumFeatureDefault, 
@@ -264,6 +265,8 @@ class DescriptorFeatureTracker(FeatureTracker):
             self.matcher_type = FeatureMatcherTypes.XFEAT 
         elif tracker_type == FeatureTrackerTypes.LIGHTGLUE:
             self.matcher_type = FeatureMatcherTypes.LIGHTGLUE         
+        elif tracker_type == FeatureTrackerTypes.SUPERGLUE:
+            self.matcher_type = FeatureMatcherTypes.SUPERGLUE
         elif tracker_type == FeatureTrackerTypes.DES_FLANN:
             self.matcher_type = FeatureMatcherTypes.FLANN
         elif tracker_type == FeatureTrackerTypes.DES_BF:

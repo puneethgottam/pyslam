@@ -53,6 +53,7 @@ from pyslam.utilities.utils_colors import GlColors
 from pyslam.utilities.utils_serialization import SerializableEnumEncoder
 
 from pyslam.local_features.feature_tracker_configs import FeatureTrackerConfigs
+from pyslam.local_features.feature_tracker import FeatureTrackerTypes
 
 from pyslam.loop_closing.loop_detector_configs import LoopDetectorConfigs
 
@@ -120,16 +121,21 @@ if __name__ == "__main__":
     # Select your tracker configuration (see the file feature_tracker_configs.py) 
     # FeatureTrackerConfigs: SHI_TOMASI_ORB, FAST_ORB, ORB, ORB2, ORB2_FREAK, ORB2_BEBLID, BRISK, AKAZE, FAST_FREAK, SIFT, ROOT_SIFT, SURF, KEYNET, SUPERPOINT, CONTEXTDESC, LIGHTGLUE, XFEAT, XFEAT_XFEAT
     # WARNING: At present, SLAM does not support LOFTR and other "pure" image matchers (further details in the commenting notes about LOFTR in feature_tracker_configs.py).
-    feature_tracker_config = FeatureTrackerConfigs.ORB2
+    feature_tracker_config = FeatureTrackerConfigs.SUPERPOINT
         
     # Select your loop closing configuration (see the file loop_detector_configs.py). Set it to None to disable loop closing. 
     # LoopDetectorConfigs: DBOW2, DBOW2_INDEPENDENT, DBOW3, DBOW3_INDEPENDENT, IBOW, OBINDEX2, VLAD, HDC_DELF, SAD, ALEXNET, NETVLAD, COSPLACE, EIGENPLACES, MEGALOC  etc.
     # NOTE: under mac, the boost/text deserialization used by DBOW2 and DBOW3 may be very slow.
-    loop_detection_config = LoopDetectorConfigs.DBOW3
+    # loop_detection_config = LoopDetectorConfigs.DBOW3
+    loop_detection_config = None
 
     # Select your semantic mapping configuration (see the file semantic_mapping_configs.py). Set it to None to disable semantic mapping.
-    semantic_mapping_config = SemanticMappingConfigs.get_config_from_slam_dataset(dataset.type) if Parameters.kDoSemanticMapping else None
+    # semantic_mapping_config = SemanticMappingConfigs.get_config_from_slam_dataset(dataset.type) if Parameters.kDoSemanticMapping else None
+    semantic_mapping_config = None
     
+    tracker_type = FeatureTrackerTypes.SUPERGLUE    #LightGlue, SuperGlue, XFeat, etc.
+    feature_tracker_config['tracker_type'] = tracker_type
+
     # Override the feature tracker and loop detector configuration from the `settings` file
     if config.feature_tracker_config_name is not None:  # Check if we set `FeatureTrackerConfig.name` in the `settings` file 
         feature_tracker_config = FeatureTrackerConfigs.get_config_from_name(config.feature_tracker_config_name) # Override the feature tracker configuration from the `settings` file

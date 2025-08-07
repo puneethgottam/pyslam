@@ -232,7 +232,7 @@ class Ros1bagDataset(Dataset):
             self._timestamp = ts
             if self.color_image_topic:
                 color_img_msg = synced[self.color_image_topic]
-                self.color_img = self.bridge.imgmsg_to_cv2(color_img_msg, desired_encoding="bgr8")
+                self.color_img = self.bridge.compressed_imgmsg_to_cv2(color_img_msg, desired_encoding="bgr8")
                 print(f'[read] color image shape: {self.color_img.shape}')
             if self.depth_image_topic:
                 #depth_msg = synced[self.depth_image_topic]
@@ -248,7 +248,7 @@ class Ros1bagDataset(Dataset):
                 print(f'[read] depth image shape: {self.depth_img.shape}, type: {self.depth_img.dtype}')
             if self.right_color_image_topic:
                 left_color_img_msg = synced[self.right_color_image_topic]
-                self.right_color_img = self.bridge.imgmsg_to_cv2(left_color_img_msg, desired_encoding="bgr8")
+                self.right_color_img = self.bridge.compressed_imgmsg_to_cv2(left_color_img_msg, desired_encoding="bgr8")
                 print(f'[read] left color image shape: {self.right_color_img.shape}')
             self.count += 1
             self.is_ok = True

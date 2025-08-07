@@ -259,7 +259,8 @@ class KeyFrame(Frame,KeyFrameGraph):
         self.des     = frame.des        # keypoint descriptors                  [NxD] where D is the descriptor length 
         self.depths  = frame.depths     # keypoint depths                       [Nx1]
         self.kps_ur  = frame.kps_ur     # right keypoint coordinates            [Nx1]
-        
+        self.scores_r = frame.scores_r  # right keypoint scores                 [Nx1]
+        self.scores  = frame.scores     # keypoint scores                       [Nx1] 
         self.median_depth = frame.median_depth
         self.fov_center_c = frame.fov_center_c
         self.fov_center_w = frame.fov_center_w

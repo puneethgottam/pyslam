@@ -41,10 +41,11 @@ class SuperPointOptions:
     def __init__(self, do_cuda=True): 
         # default options from demo_superpoints
         self.weights_path=config.cfg.root_folder + '/thirdparty/superpoint/superpoint_v1.pth'
+        # self.weights_path = '/home/puneeth/Desktop/projects/gdftt/models/pl/model_40.pth'  # path to the finetuned model
         print(f'SuperPoint weights: {self.weights_path}')
         self.nms_dist=3
-        self.conf_thresh=0.015
-        self.nn_thresh=0.7
+        self.conf_thresh=0.01
+        self.nn_thresh=1.0
         
         use_cuda = torch.cuda.is_available() and do_cuda
         device = torch.device('cuda' if use_cuda else 'cpu')
@@ -113,7 +114,7 @@ class SuperPointFeature2D(BaseFeature2D):
             self.kps = convert_superpts_to_keypoints(self.pts.T, size=self.keypoint_size)
             if kVerbose:
                 print('detector: SUPERPOINT, #features: ', len(self.kps), ', frame res: ', frame.shape[0:2])      
-            return self.kps, transpose_des(self.des)                 
+            return self.kps, transpose_des(self.des), self.heatmap               
             
     # return keypoints if available otherwise call detectAndCompute()    
     def detect(self, frame, mask=None):  # mask is a fake input  

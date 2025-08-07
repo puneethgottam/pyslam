@@ -488,16 +488,18 @@ class Tracking:
         print('matching keypoints with ', FeatureTrackerShared.feature_matcher.matcher_type.name)              
         self.timer_match.start()
         
-        #matching_result = match_frames(f_cur, f_ref) # original code that used all the reference keypoints 
+        matching_result = match_frames(f_cur, f_ref) # original code that used all the reference keypoints 
         
         # match only the reference keypoints in f_ref that correspond to map points and are not bad 
-        idxs_ref_map_points = np.array([i for i,p in enumerate(f_ref.points) if p is not None and not p.is_bad], dtype=int)
-        des_ref = f_ref.des[idxs_ref_map_points]
-        kps_ref = f_ref.kps[idxs_ref_map_points]
-        des_cur = f_cur.des
-        kps_cur = f_cur.kps
-        matching_result = FeatureTrackerShared.feature_matcher.match(f_cur.img, f_ref.img, des_cur, des_ref, kps1=kps_cur, kps2=kps_ref)
-        matching_result.idxs2 = idxs_ref_map_points[matching_result.idxs2] # map back to the original reference keypoints 
+        # idxs_ref_map_points = np.array([i for i,p in enumerate(f_ref.points) if p is not None and not p.is_bad], dtype=int)
+        # des_ref = f_ref.des[idxs_ref_map_points]
+        # kps_ref = f_ref.kps[idxs_ref_map_points]
+        # des_cur = f_cur.des
+        # kps_cur = f_cur.kps
+        # scores_cur = f_cur.scores[idxs_ref_map_points]
+        # scores_ref = f_ref.scores[idxs_ref_map_points]
+        # matching_result = FeatureTrackerShared.feature_matcher.match(f_cur.img, f_ref.img, des_cur, des_ref, kps1=kps_cur, kps2=kps_ref, scores1=scores_cur,scores2=scores_ref)
+        # matching_result.idxs2 = idxs_ref_map_points[matching_result.idxs2] # map back to the original reference keypoints 
         
         self.timer_match.refresh()
         idxs_cur = np.asarray(matching_result.idxs1, dtype=int) if matching_result.idxs1 is not None else np.array([], dtype=int)

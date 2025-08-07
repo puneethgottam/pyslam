@@ -1053,7 +1053,10 @@ class FeatureManager:
             # standard detectAndCompute  
             if self.is_detector_equal_to_descriptor:                     
                 # detector = descriptor => call them together with detectAndCompute() method 
-                kps, des = self._feature_detector.detectAndCompute(frame, mask)   
+                if self.detector_type == FeatureDetectorTypes.SUPERPOINT:
+                    kps, des, scores = self._feature_detector.detectAndCompute(frame, mask)
+                else:
+                    kps, des = self._feature_detector.detectAndCompute(frame, mask)   
                 if kVerbose:
                     print('detector:', self.detector_type.name,', #features:',len(kps))           
                     print('descriptor:', self.descriptor_type.name,', #features:',len(kps))                      
@@ -1076,7 +1079,10 @@ class FeatureManager:
             unpackSiftOctaveKps(kps, method=UnpackOctaveMethod.INTRAL_LAYERS)           
         if kVerbose:
             print('detector:',self.detector_type.name,', descriptor:', self.descriptor_type.name,', #features:', len(kps),' (#ref:', self.num_features, '), [kp-filter:',filter_name,']')                                         
-        self.debug_print(kps)             
+        self.debug_print(kps)  
+        if self.detector_type == FeatureDetectorTypes.SUPERPOINT:
+            # SuperPoint returns also scores, so we return them as well
+            return kps, des, scores            
         return kps, des             
  
  
