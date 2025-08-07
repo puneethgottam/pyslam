@@ -1,4 +1,4 @@
-# rosdocker  🤖 🐳
+# Docker  🤖 🐳
 
 <!-- TOC -->
 
@@ -106,7 +106,7 @@ $ sudo service docker restart
 ---
 ## References
 
-* I created a docker cheatsheet [here](docker_commands.md).
+* Docker cheatsheet [here](docker_commands.md).
 * Nice intro/demo for docker:
   https://www.youtube.com/watch?v=XcJzOYe3E6M 
 * Install Nvidia container toolkit:   
