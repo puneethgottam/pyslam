@@ -52,10 +52,10 @@ Consider one of our [available dockerfiles](#available-images-and-dockerfiles) `
 * Stop the container     
 `$ ./stop.sh <NAME>`     
 
-For instance, if you want to build, run and stop the `noetic` container/image corresponding to `Dockerfile_noetic`, then run:   
-`$ ./build.sh noetic`     
-`$ ./run.sh noetic`    
-`$ ./stop.sh noetic`   
+For instance, if you want to build, run and stop the `pyslam` container/image corresponding to `Dockerfile_pyslam`, then run:   
+`$ ./build.sh pyslam`     
+`$ ./run.sh pyslam`    
+`$ ./stop.sh pyslam`   
 
 **NOTE1**: When you update your Nvidia drivers, rebuild the image with the `build.sh` script. 
 
