@@ -2,7 +2,7 @@
 
 <!-- TOC -->
 
-- [rosdocker  🤖 🐳](#rosdocker---)
+- [Docker  🤖 🐳](#rosdocker---)
   - [Requirements](#requirements)
   - [Usage](#usage)
     - [Configuration](#configuration)
@@ -66,39 +66,8 @@ For instance, if you want to build, run and stop the `noetic` container/image co
 
 Each image `<NAME>` listed below corresponds to a dockerfile: `Dockerfile_<NAME>`. 
 
-- `ubuntu18` built on top of `ubuntu:18.04` (no ROS)
-- `ubuntu18_cuda` built on top of `nvidia/cuda:11.8.0-devel-ubuntu18.04` (no ROS)
-- `melodic` built on top of `ros:melodic-ros-base-bionic` (`ubuntu:18.04`)
-- `noetic` built on top of `ros:noetic-ros-base-focal` (`ubuntu:20.04` with ROS)
-- `noetic_cuda` built on top of `nvidia/cuda:12.2.2-devel-ubuntu20.04` (`ubuntu:20.04` with ROS and CUDA)
-- `noetic_3dmr` built on top of the previous `noetic` and installing all the deps of [3DMR](https://github.com/luigifreda/3dmr.git)  (`ubuntu:20.04`)
-- `ubuntu20` built on top of `ubuntu:20.04` (no ROS)
-- `ubuntu20_conda` built on top of `ubuntu:20.04` with `conda` for managing python (no ROS)
-- `ubuntu20_cuda` built on top of `nvidia/cuda:12.2.2-devel-ubuntu20.04` (no ROS, with CUDA)
 - `pyslam` built on top of `ubuntu:20.04`  and installing all the deps of [pyslam](https://github.com/luigifreda/pyslam) *=>* you can now pull the image from [here](https://github.com/users/luigifreda/packages/container/package/rosdocker)
 - `pyslam_cuda` built on top of `nvidia/cuda:12.1.0-devel-ubuntu20.04` and installing all the deps of [pyslam](https://github.com/luigifreda/pyslam) with CUDA support *=>* you can now pull the image from [here](https://github.com/users/luigifreda/packages/container/package/rosdocker)
-- `humble`  built on the top of `ros:humble` (`ubuntu:22.04`)
-- `ubuntu22` built on top of `ubuntu:22.04` (no ROS)
-- `ubuntu22_cuda` built on top of `nvidia/cuda:11.8.0-devel-ubuntu22.04` (no ROS, with CUDA) 
-- `ubuntu22_cuda_conda` built on top of `nvidia/cuda:11.8.0-devel-ubuntu22.04` with `conda` (no ROS, with CUDA) 
-- `ubuntu24` built on top of `ubuntu:24.04` (no ROS)
-- `ubuntu24_cuda` built on top of `nvidia/cuda:12.5.1-devel-ubuntu24.04` (no ROS, with CUDA) 
-  
-An old heritage:  
-- `tradr` (built on top of `ros:indigo`) (`ubuntu:14.04`) (it was used during the [TRADR](https://www.tradr-project.eu/) program)
-
-Now, you can easily add your new custom docker file. 
-
----
-### 3DMR  
-
-In order to build the `noetic_3dmr` image, which can host the [3DMR project](https://github.com/luigifreda/3dmr), check you are connected to the network and run these commands:     
-`$ ./build.sh noetic`     
-`$ ./build.sh noetic_3dmr`      
-
-Now, set your folder `$WORKING_FOLDER_TO_MOUNT_IN_CONTAINER` (see the [configuration](#configuration) section). From your host, open a terminal and clone the [3DMR](https://github.com/luigifreda/3dmr) project into `$WORKING_FOLDER_TO_MOUNT_IN_CONTAINER`. Then, run the container `noetic_3dmr`:    
-`$ ./run.sh noetic_3dmr`.      
-Next, from within the run container, get into the folder `$WORKING_FOLDER_TO_MOUNT_IN_CONTAINER`, and build the workspace (see the instructions and scripts in [3DMR](https://github.com/luigifreda/3dmr)). 
 
 ---
 ### pyslam 
@@ -153,4 +122,4 @@ $ sudo service docker restart
 ---
 ## Credits 
 
-This repository was initially inspired by https://github.com/jbohren/rosdocked. Thanks to its Author. I've been using and improving this repo in the background for years. Now, it's time to share it back.  
+This repository is a modified version inspired by https://github.com/luigifreda/rosdocker. Thanks to its Author. 
