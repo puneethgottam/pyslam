@@ -41,7 +41,7 @@ class SuperPointOptions:
     def __init__(self, do_cuda=True): 
         # default options from demo_superpoints
         self.weights_path=config.cfg.root_folder + '/thirdparty/superpoint/superpoint_v1.pth'
-        # self.weights_path = '/home/puneeth/Desktop/projects/gdftt/models/pl/model_40.pth'  # path to the finetuned model
+        # self.weights_path = '/workspace/data/models/pl/model_40.pth'  # path to the finetuned model
         print(f'SuperPoint weights: {self.weights_path}')
         self.nms_dist=3
         self.conf_thresh=0.01

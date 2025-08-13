@@ -122,7 +122,6 @@ else
             -v $XAUTH:$XAUTH:rw \
             $HOME_OPTIONS $MOUNT_OPTIONS $NVIDIA_OPTIONS \
             -v $HOME/.ssh:$HOME/.ssh \
-            # -v ~/Desktop/projects/git/pyslam:/workspace/pyslam \
             -v ~/Desktop/mythesis/data:/workspace/data \
             --name $CONTAINER_NAME \
       $1 $SHELL

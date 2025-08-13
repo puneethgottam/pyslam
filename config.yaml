@@ -1,14 +1,14 @@
 DATASET:
   # select your dataset (decomment only one of the following lines) 
   #type: EUROC_DATASET  
-  type: KITTI_DATASET
+  # type: KITTI_DATASET
   #type: TUM_DATASET
   #type: ICL_NUIM_DATASET
   #type: REPLICA_DATASET
   #type: TARTANAIR_DATASET
   # type: VIDEO_DATASET
   #type: SCANNET_DATASET
-  # type: ROS1BAG_DATASET
+  type: ROS1BAG_DATASET
   #type: ROS2BAG_DATASET  
   #type: FOLDER_DATASET
   #type: LIVE_DATASET  # Not recommended for current development stage
@@ -17,9 +17,9 @@ DATASET:
 KITTI_DATASET:
   type: kitti
   sensor_type: stereo # Here, 'sensor_type' can be 'mono' or 'stereo'
-  base_path: /home/puneeth/Desktop/projects/gdftt/data/kitti
+  base_path: /workspace/data/kitti_color
   #
-  name: '06'
+  name: '07'
   settings: settings/KITTI04-12.yaml # do not forget to correctly set the corresponding camera settings file 
   #
   # name: '00'
@@ -153,7 +153,7 @@ ROS1BAG_DATASET:
   #
   #
   sensor_type: stereo # Here, 'sensor_type' can be 'mono', 'stereo', or 'rgbd' depending on the ros1bag content  
-  base_path: /home/puneeth/Desktop/projects/gdftt/data    # path of the folder containing the bag
+  base_path: /workspace/data  # path of the folder containing the bag
   name: pohang04_narrow_small_new.bag                                                 # file name of the bag
   settings: settings/pohang.yaml                  # do not forget to correctly set the corresponding camera settings file
   ros_settings:
@@ -165,7 +165,7 @@ ROS1BAG_DATASET:
       right_color_image: '/stereo_cam/right_img/compressed' # used for stereo datasets
       # depth_image: '/camera/depth/image'           # used for rgbd datasets
       #camera_info: '/camera/rgb/camera_info'      # TODO: override camera settings if available
-  groundtruth_file: /home/puneeth/Desktop/projects/gdftt/data/ground_truth.txt
+  groundtruth_file: /workspace/data/ground_truth.txt
   environment_type: outdoor  # Here, 'environment_type' can be 'indoor' or 'outdoor'          
   #
   #

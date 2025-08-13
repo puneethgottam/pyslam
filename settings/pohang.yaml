@@ -1,0 +1,109 @@
+#--------------------------------------------------------------------------------------------
+# Viewer Parameters
+#--------------------------------------------------------------------------------------------
+Viewer.KeyFrameSize: 0.05
+Viewer.KeyFrameLineWidth: 1.0
+Viewer.GraphLineWidth: 0.9
+Viewer.PointSize: 2.0
+Viewer.CameraSize: 0.08
+Viewer.CameraLineWidth: 3.0
+Viewer.ViewpointX: 0.0
+Viewer.ViewpointY: -0.7
+Viewer.ViewpointZ: -1.8
+Viewer.ViewpointF: 500.0
+Viewer.imageViewScale: 1.0
+
+
+# Rectified camera calibration and distortion parameters 
+Camera.fx: 1813.3846052630965
+Camera.fy: 1813.3846052630965
+Camera.cx: 1128.0369110107422
+Camera.cy: 518.37784957885742
+
+Camera.k1: 0.0
+Camera.k2: 0.0
+Camera.p1: 0.0
+Camera.p2: 0.0
+
+Camera.width: 2048
+Camera.height: 1080
+
+# Camera frames per second 
+Camera.fps: 10
+
+# stereo baseline times fx
+Camera.bf: 1530.1100311963100
+
+# Color order of the images (0: BGR, 1: RGB. It is ignored if images are grayscale)
+Camera.RGB: 1
+
+# Close/Far threshold. Baseline times.
+ThDepth: 35.0
+
+#--------------------------------------------------------------------------------------------
+# Stereo Rectification. Only if you need to pre-rectify the images.
+# Camera.fx, .fy, etc must be the same as in LEFT.P
+#--------------------------------------------------------------------------------------------
+LEFT.height: 1080
+LEFT.width: 2048
+LEFT.D:  #!!opencv-matrix
+   rows: 1
+   cols: 5
+   dt: d
+   data: [-0.082292808267338341, 0.10366027318517390, -0.0034940032414059268, 0.00084014002308057311, 0.093700291321559645 ]
+LEFT.K: #!!opencv-matrix
+   rows: 3
+   cols: 3
+   dt: d
+   data: [1814.5061420730431, 0.0,1026.1977130691339, 0.0, 1814.506142073043, 524.7984412358129, 0.0, 0.0, 1.0]
+LEFT.R:  #!!opencv-matrix
+   rows: 3
+   cols: 3
+   dt: d
+   data: [0.99922579475882711, -0.0042633632296856516, -0.039110546180822027, 0.0040922130776684783, 0.99998170288875599, -0.0044550734932986783, 0.039128824167324605, 0.0042915756634944405, 0.99922495840406589]
+LEFT.P:  #!!opencv-matrix
+   rows: 3
+   cols: 4
+   dt: d
+   data: [1813.3846052630965, 0., 1128.0369110107422, 0., 0., 1813.3846052630965, 518.37784957885742, 0.0, 0.0, 0.0, 1.0, 0.0]
+
+RIGHT.height: 1080
+RIGHT.width: 2048
+RIGHT.D: #!!opencv-matrix
+   rows: 1
+   cols: 5
+   dt: d
+   data: [-0.080226526918819735, 0.093063204690196202, -0.0029454095837901139, 0.0011427467119549529, 0.11675623990198160 ]
+RIGHT.K: #!!opencv-matrix
+   rows: 3
+   cols: 3
+   dt: d
+   data: [1812.2630684531500, 0.0, 1041.3009362023790, 0.0, 1812.2630684531500, 519.07223080294409, 0.0, 0.0, 1.0]
+RIGHT.R:  #!!opencv-matrix
+   rows: 3
+   cols: 3
+   dt: d
+   data: [0.99926164477757740, 0.0058866434153255730, -0.037967258338093703, -0.0057204811231781295, 0.99997358629938227, 0.0044836145319426144, 0.037992648922259994, -0.0042631130471157313, 0.99926892501218989]
+RIGHT.P:  #!!opencv-matrix
+   rows: 3
+   cols: 4
+   dt: d
+   data: [1813.3846052630965, 0.0, 1128.0369110107422, -1530.1100311963100, 0.0, 1813.3846052630965, 518.37784957885742, 0.0, 0.0, 0.0, 1.0, 0.0]
+
+#--------------------------------------------------------------------------------------------
+# Features extraction 
+#--------------------------------------------------------------------------------------------
+
+FeatureTrackerConfig.nFeatures: 3000
+
+#--------------------------------------------------------------------------------------------
+# Matching (Data Association)
+#--------------------------------------------------------------------------------------------
+
+Matching.farPointsThreshold: 100.0    # meters (to exclude far points from matching when we have an outdoor scene)
+
+#--------------------------------------------------------------------------------------------
+# Keyframe generation
+#--------------------------------------------------------------------------------------------
+# KeyFrame.useFovCentersBasedGeneration: 1  # compute 3D fov centers of camera frames by using median depth and use their distances to control keyframe generation
+# KeyFrame.maxFovCentersDistance: 0.1       # max distance between fov centers in order to generate a keyframe

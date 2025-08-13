@@ -17,7 +17,13 @@
 * You should have received a copy of the GNU General Public License
 * along with PYSLAM. If not, see <http://www.gnu.org/licenses/>.
 """
-
+import torch
+if not hasattr(torch, "uint64"):
+    torch.uint64 = torch.int64  # map to signed 64-bit
+if not hasattr(torch, "uint32"):
+    torch.uint32 = torch.int32  # map to signed 64-bit
+if not hasattr(torch, "uint16"):
+    torch.uint16 = torch.int16  # map to signed 64-bit
 import cv2
 import time 
 import os
@@ -133,7 +139,7 @@ if __name__ == "__main__":
     # semantic_mapping_config = SemanticMappingConfigs.get_config_from_slam_dataset(dataset.type) if Parameters.kDoSemanticMapping else None
     semantic_mapping_config = None
     
-    tracker_type = FeatureTrackerTypes.SUPERGLUE    #LightGlue, SuperGlue, XFeat, etc.
+    tracker_type = FeatureTrackerTypes.SUPERGLUE   #LightGlue, SuperGlue, XFeat, etc.
     feature_tracker_config['tracker_type'] = tracker_type
 
     # Override the feature tracker and loop detector configuration from the `settings` file
