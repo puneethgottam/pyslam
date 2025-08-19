@@ -1001,7 +1001,7 @@ class CustomDataset(Dataset):
         img = None
         if frame_id < self.max_frame_id:
             try: 
-                img = cv2.imread(self.path  + '/' + self.name + '/stereo' + self.image_left_path + str(frame_id).zfill(6) + '.png')
+                img = cv2.imread(self.path  + '/' + self.name + self.image_left_path + str(frame_id).zfill(6) + '.png')
                 self._timestamp = self.timestamps[frame_id]
             except:
                 print('could not retrieve image: ', frame_id, ' in path ', self.path )
@@ -1017,7 +1017,7 @@ class CustomDataset(Dataset):
         img = None
         if frame_id < self.max_frame_id:        
             try: 
-                img = cv2.imread(self.path  + '/' + self.name + '/stereo' + self.image_right_path + str(frame_id).zfill(6) + '.png') 
+                img = cv2.imread(self.path  + '/' + self.name + self.image_right_path + str(frame_id).zfill(6) + '.png') 
                 self._timestamp = self.timestamps[frame_id]        
             except:
                 print('could not retrieve image: ', frame_id, ' in path ', self.path )   
