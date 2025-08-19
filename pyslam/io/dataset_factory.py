@@ -135,7 +135,7 @@ def dataset_factory(config:'Config') -> Dataset:
     if type == 'scannet':
         dataset = ScannetDataset(path, name, sensor_type, associations, start_frame_id, DatasetType.SCANNET, config)
     if type == 'custom':
-        dataset = CustomDataset(path, name, sensor_type, associations, start_frame_id, DatasetType.CUSTOM, config)  
+        dataset = CustomDataset(path, name, sensor_type, associations, start_frame_id, DatasetType.CUSTOM)  
                
     dataset.minimal_config = MinimalDatasetConfig(config=config)
 

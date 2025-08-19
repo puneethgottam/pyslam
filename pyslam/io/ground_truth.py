@@ -49,6 +49,7 @@ class GroundTruthType(SerializableEnum):
     TARTANAIR  = 6
     SIMPLE     = 7
     SCANNET    = 8
+    CUSTOM     = 9
 
 
 def groundtruth_factory(settings):
@@ -91,7 +92,7 @@ def groundtruth_factory(settings):
     if type == 'custom':
         if 'groundtruth_file' in settings:
             name = settings['groundtruth_file']
-            return SimpleGroundTruth(None, name, associations, start_frame_id, type=GroundTruthType.SIMPLE)  
+            return SimpleGroundTruth(None, name, associations, start_frame_id, type=GroundTruthType.CUSTOM)  
     print('[groundtruth_factory] Not using groundtruth')
     print('[groundtruth_factory] If you are using main_vo.py, your estimated trajectory will not make sense!')          
     return GroundTruth(path, name, associations, start_frame_id, type=GroundTruthType.NONE)
