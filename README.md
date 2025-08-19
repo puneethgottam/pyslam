@@ -88,7 +88,7 @@ pySLAM serves as a flexible baseline framework to experiment with VO/SLAM techni
       - [ROS1 bags](#ros1-bags)
       - [ROS2 bags](#ros2-bags)
       - [Video and Folder Datasets](#video-and-folder-datasets)
-      - [Custom Datasets] (#custom-datasets)
+      - [Custom Datasets](#custom-datasets)
     - [Camera Settings](#camera-settings)
   - [References](#references)
   - [Credits](#credits)
@@ -188,7 +188,6 @@ The internal pySLAM libraries are imported by using a `Config` instance (from [p
 
 
 ### Ubuntu 
-
 - With **venv**: Follow the instructions reported [here](./docs/PYTHON-VIRTUAL-ENVS.md).  The procedure has been tested on *Ubuntu 18.04*, *20.04*, *22.04* and *24.04*. 
 - With **conda**: Run the procedure described in this other [file](./docs/CONDA.md).
 - With **pixi**: Run `pixi shell` in the root folder of the repo before launching `./install_all.sh` (see this [file](./docs/PIXI.md) for further details).
@@ -779,7 +778,7 @@ Follow the same instructions provided for the TUM datasets.
 
 You can use the `VIDEO_DATASET` and `FOLDER_DATASET` types to read generic video files and image folders (specifying a glob pattern), respectively. A companion ground truth file can be set in the simple format type: Refer to the class `SimpleGroundTruth` in `io/ground_truth.py` and check the script `io/convert_groundtruth_to_simple.py`.  
 
-#### Custom datasets
+#### Custom Datasets
 
 You can use the `CUSTOM_DATASET` type to read generic image folders for stereo camera setup which is not possible with `FOLDER_DATASET`. A companion ground truth file can be set in the simple format type: Refer to the class `SimpleGroundTruth` in `io/ground_truth.py` and check the script `io/convert_groundtruth_to_simple.py`. 
 
@@ -873,6 +872,7 @@ Moreover, you may want to have a look at the OpenCV [guide](https://docs.opencv.
 * [DepthAnythingV2](https://github.com/DepthAnything/Depth-Anything-V2)
 * [DepthPro](https://github.com/apple/ml-depth-pro)
 * [RAFT-Stereo](https://github.com/princeton-vl/RAFT-Stereo)
+* [CREStereo](https://github.com/megvii-research/CREStereo) and [CREStereo-Pytorch](https://github.com/ibaiGorordo/CREStereo-Pytorch)
 * [CREStereo](https://github.com/megvii-research/CREStereo) and [CREStereo-Pytorch](https://github.com/ibaiGorordo/CREStereo-Pytorch)
 * [MonoGS](https://github.com/muskie82/MonoGS)
 * [mast3r](https://github.com/naver/mast3r)
