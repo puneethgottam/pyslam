@@ -35,7 +35,7 @@ from pyslam.utilities.utils_string import levenshtein_distance
 import ujson as json
 
 from .dataset_types import DatasetType, SensorType, DatasetEnvironmentType, MinimalDatasetConfig
-from .dataset import Dataset, FolderDataset, FolderDatasetParallel, KittiDataset, ScannetDataset, TumDataset, EurocDataset, ReplicaDataset, TartanairDataset, VideoDataset, LiveDataset
+from .dataset import Dataset, FolderDataset, FolderDatasetParallel, KittiDataset, ScannetDataset, TumDataset, EurocDataset, ReplicaDataset, TartanairDataset, VideoDataset, LiveDataset, CustomDataset
 
 
 from typing import TYPE_CHECKING
@@ -134,6 +134,8 @@ def dataset_factory(config:'Config') -> Dataset:
         dataset = Ros2bagDataset(path, name, sensor_type, associations, start_frame_id, DatasetType.ROS1BAG, environment_type, fps, config)           
     if type == 'scannet':
         dataset = ScannetDataset(path, name, sensor_type, associations, start_frame_id, DatasetType.SCANNET, config)
+    if type == 'custom':
+        dataset = CustomDataset(path, name, sensor_type, associations, start_frame_id, DatasetType.CUSTOM, config)  
                
     dataset.minimal_config = MinimalDatasetConfig(config=config)
 

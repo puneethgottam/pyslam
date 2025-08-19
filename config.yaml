@@ -12,6 +12,7 @@ DATASET:
   #type: ROS2BAG_DATASET  
   #type: FOLDER_DATASET
   #type: LIVE_DATASET  # Not recommended for current development stage
+  #type: CUSTOM_DATASET # Look in Readme file for dataset folder structure
 
 
 KITTI_DATASET:
@@ -237,6 +238,14 @@ SAVE_TRAJECTORY:
   output_folder: results/metrics # relative to pyslam root folder 
   basename: trajectory           # basename of the trajectory saving output
 
+CUSTOM_DATASET:
+  type: custom
+  sensor_type: stereo # Here, 'sensor_type' can be 'mono' or 'stereo'
+  base_path: /home/workspace/dataset 
+  name: 'pohang04' # name of the custom dataset folder
+  settings: settings/pohang.yaml # do not forget to correctly set the corresponding camera settings file 
+  groundtruth_file: navigation/baseline.txt
+  environment_type: outdoor # Here, 'environment_type' can be 'indoor' or 'outdoor'
 
 # This section allows to change and override the default values of the global parameters contained in pyslam/config_parameters.py
 # In this way, this yaml configuration can be used as a unique entry-point for launching experiments. 

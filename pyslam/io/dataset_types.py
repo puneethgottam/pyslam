@@ -40,6 +40,7 @@ class DatasetType(SerializableEnum):
     ROS2BAG     = 10
     LIVE        = 11
     SCANNET     = 12
+    CUSTOM      = 13
 
     
 @register_class

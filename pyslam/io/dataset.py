@@ -970,3 +970,60 @@ class TartanairDataset(Dataset):
             self.is_ok = False      
             self._timestamp = None                       
         return np.ascontiguousarray(img) if img is not None else None
+    
+class CustomDataset(Dataset):
+    def __init__(self, path, name, sensor_type=SensorType.STEREO, associations=None, start_frame_id=0, type=DatasetType.CUSTOM): 
+        super().__init__(path, name, sensor_type, 10, associations, start_frame_id, type)
+        self.environment_type = DatasetEnvironmentType.OUTDOOR
+        if sensor_type != SensorType.MONOCULAR and sensor_type != SensorType.STEREO:
+            raise ValueError('Custom dataset only supports MONOCULAR and STEREO sensor types')        
+        self.fps = 10
+        if sensor_type == SensorType.STEREO:
+            self.scale_viewer_3d = 1          
+        self.image_left_path = '/left_images/'
+        if sensor_type == SensorType.STEREO:    
+            self.image_right_path = '/right_images/'           
+        self.timestamps = np.loadtxt(self.path + '/' +str(self.name) + '/timestamp.txt', dtype=np.float64) # need to establish the structure of folder
+        self.max_frame_id = len(self.timestamps)
+        self.num_frames = self.max_frame_id
+        print('Processing Custom dataset of lenght: ', len(self.timestamps))
+        
+    def set_is_color(self,val):
+        self.is_color = val 
+        if self.is_color:
+            print('dataset in color!')            
+            self.image_left_path = '/left_images/'
+            if self.sensor_type == SensorType.STEREO: 
+                print('dataset in stereo color!')
+                self.image_right_path = '/right_images/'                          
+        
+    def getImage(self, frame_id):
+        img = None
+        if frame_id < self.max_frame_id:
+            try: 
+                img = cv2.imread(self.path  + '/' + self.name + '/stereo' + self.image_left_path + str(frame_id).zfill(6) + '.png')
+                self._timestamp = self.timestamps[frame_id]
+            except:
+                print('could not retrieve image: ', frame_id, ' in path ', self.path )
+            if frame_id+1 < self.max_frame_id:   
+                self._next_timestamp = self.timestamps[frame_id+1]
+            else:
+                self._next_timestamp = self._timestamp + self.Ts             
+        self.is_ok = (img is not None)
+        return np.ascontiguousarray(img) if img is not None else None
+
+    def getImageRight(self, frame_id):
+        print(f'[CustomDataset] getImageRight: {frame_id}')
+        img = None
+        if frame_id < self.max_frame_id:        
+            try: 
+                img = cv2.imread(self.path  + '/' + self.name + '/stereo' + self.image_right_path + str(frame_id).zfill(6) + '.png') 
+                self._timestamp = self.timestamps[frame_id]        
+            except:
+                print('could not retrieve image: ', frame_id, ' in path ', self.path )   
+            if frame_id+1 < self.max_frame_id:   
+                self._next_timestamp = self.timestamps[frame_id+1]
+            else:
+                self._next_timestamp = self._timestamp + self.Ts                   
+        self.is_ok = (img is not None)        
+        return np.ascontiguousarray(img) if img is not None else None

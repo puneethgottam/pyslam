@@ -88,6 +88,7 @@ pySLAM serves as a flexible baseline framework to experiment with VO/SLAM techni
       - [ROS1 bags](#ros1-bags)
       - [ROS2 bags](#ros2-bags)
       - [Video and Folder Datasets](#video-and-folder-datasets)
+      - [Custom Datasets] (#custom-datasets)
     - [Camera Settings](#camera-settings)
   - [References](#references)
   - [Credits](#credits)
@@ -689,6 +690,7 @@ Dataset | type in `config.yaml`
 [ROS2  bags](https://docs.ros.org/en/foxy/Tutorials/Beginner-CLI-Tools/Recording-And-Playing-Back-Data/Recording-And-Playing-Back-Data.html) | `type: ROS2BAG_DATASET` 
 Video file                                                                                                                                   | `type: VIDEO_DATASET` 
 Folder of images                                                                                                                             | `type: FOLDER_DATASET` 
+Custom Dataset | `type: CUSTOM_DATASET` 
 
 
 
@@ -777,6 +779,19 @@ Follow the same instructions provided for the TUM datasets.
 
 You can use the `VIDEO_DATASET` and `FOLDER_DATASET` types to read generic video files and image folders (specifying a glob pattern), respectively. A companion ground truth file can be set in the simple format type: Refer to the class `SimpleGroundTruth` in `io/ground_truth.py` and check the script `io/convert_groundtruth_to_simple.py`.  
 
+#### Custom datasets
+
+You can use the `CUSTOM_DATASET` type to read generic image folders for stereo camera setup which is not possible with `FOLDER_DATASET`. A companion ground truth file can be set in the simple format type: Refer to the class `SimpleGroundTruth` in `io/ground_truth.py` and check the script `io/convert_groundtruth_to_simple.py`. 
+
+pySLAM code expects the following structure in the specified dataset path folder (specified in the section `CUSTOM_DATASET` of the file `config.yaml`). : 
+```bash
+├── base_path
+    ├── name
+         ├── left_images
+         ├── right_images
+         ├── timestamps.txt
+         ├── groundtruth.txt 
+```
 --- 
 ### Camera Settings
 
