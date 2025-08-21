@@ -66,6 +66,7 @@ class Config:
         self.feature_tracker_config : dict | None = None
         self.loop_detection_config : dict | None = None
         self.semantic_mapping_config : dict | None = None
+        self.training_settings : dict | None = None
         
         self.trajectory_saving_settings : dict = {}
         
@@ -81,6 +82,7 @@ class Config:
         self.get_system_state_settings()
         self.get_trajectory_saving_settings()
         self.get_and_set_global_parameters()
+        self.get_training_setting()
 
 
     # read core lib paths from config.yaml and set sys paths
@@ -192,6 +194,11 @@ class Config:
         self.ros_settings = self.config[self.dataset_type]['ros_settings']
         self.ros_settings['bag_path'] = os.path.join( self.dataset_settings['base_path'], self.dataset_settings['name'])
         #print(f'ROS settings: {self.ros_settings}')
+    
+    def get_training_setting(self):
+        self.training_settings = self.config['TRAINING_DATA']
+        self.training_settings['file_path'] = os.path.join( self.training_settings['folder'], self.training_settings['file'])
+        print(f'[Config] Training settings: {self.training_settings}')
 
     # calibration matrix
     @property

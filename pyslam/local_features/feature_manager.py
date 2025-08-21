@@ -1054,7 +1054,7 @@ class FeatureManager:
             if self.is_detector_equal_to_descriptor:                     
                 # detector = descriptor => call them together with detectAndCompute() method 
                 if self.detector_type == FeatureDetectorTypes.SUPERPOINT:
-                    kps, des, scores = self._feature_detector.detectAndCompute(frame, mask)
+                    kps, des, scores, des_map = self._feature_detector.detectAndCompute(frame, mask)
                 else:
                     kps, des = self._feature_detector.detectAndCompute(frame, mask)   
                 if kVerbose:
@@ -1082,7 +1082,7 @@ class FeatureManager:
         self.debug_print(kps)  
         if self.detector_type == FeatureDetectorTypes.SUPERPOINT:
             # SuperPoint returns also scores, so we return them as well
-            return kps, des, scores            
+            return kps, des, scores, des_map            
         return kps, des             
  
  

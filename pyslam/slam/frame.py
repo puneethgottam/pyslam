@@ -393,6 +393,12 @@ class Frame(FrameBase):
         self.scores = None      # scores for the keypoints (e.g. confidence scores, etc.)
         self.scores_r = None    # scores for the right keypoints (e.g. confidence scores, etc.)
 
+        # Data needed for training feature detector and tracker
+        self.des_map = None  # keypoint descriptors map (for training purposes) [NxD] where D is the descriptor length  
+        self.score_map = None  # keypoint coordinates map (for training purposes) [HxW]
+        self.des_map_r = None  # right keypoint descriptors map (for training purposes) [NxD] where D is the descriptor length
+        self.score_map_r = None  # right keypoint coordinates map (for training purposes)   [HxW]
+        self.train_data = {} # training data dictionary (for training purposes)
         # map points information arrays 
         self.points: list[MapPoint] | None = None     # map points => self.points[idx] (if is not None) is the map point matched with self.kps[idx]
         self.outliers = None     # outliers flags for map points (reset and set by pose_optimization())
@@ -478,14 +484,14 @@ class Frame(FrameBase):
                         future_r = executor.submit(detect_and_compute, img_right, left=False)
                         if str(FeatureTrackerShared.feature_manager.descriptor_type) == 'SUPERPOINT':
                             # SuperPoint returns keypoints, descriptors and heatmap
-                            self.kps, self.des, self.scores = future_l.result()
-                            self.kps_r, self.des_r, self.scores_r = future_r.result()
+                            self.kps, self.des, self.score_map, self.des_map = future_l.result()
+                            self.kps_r, self.des_r, self.score_map_r, self.des_map_r = future_r.result()
                             x= [int(point.pt[0]) for point in self.kps]
                             y= [int(point.pt[1]) for point in self.kps]
-                            self.scores = self.scores[y,x]
+                            self.scores = self.score_map[y,x]
                             x_r= [int(point.pt[0]) for point in self.kps_r]
                             y_r= [int(point.pt[1]) for point in self.kps_r]
-                            self.scores_r = self.scores_r[y_r,x_r]
+                            self.scores_r = self.score_map_r[y_r,x_r]
                         else:
                             self.kps, self.des = future_l.result()
                             self.kps_r, self.des_r = future_r.result()

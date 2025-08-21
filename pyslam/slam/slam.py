@@ -93,7 +93,7 @@ class Slam(object):
         self.environment_type = environment_type
         self.slam_mode = slam_mode
         self.headless = headless
-          
+        self.train_data = {} # used for training data collection for feature tracking adaptation  
         self.feature_tracker = None
         self.init_feature_tracker(feature_tracker_config)
         
@@ -443,3 +443,22 @@ class Slam(object):
 
         return poses, timestamps, ids
 
+    def add_training_data(self, img_id, score_map, score_map_r, des_map, des_map_r):
+        """
+        Add training data for feature tracking adaptation.
+        """
+        if img_id not in self.train_data:
+            self.train_data[img_id] = {
+                'score_map': score_map,
+                'score_map_r': score_map_r,
+                'des_map': des_map,
+                'des_map_r': des_map_r
+            }
+        else:
+            # If the image ID already exists, update the data
+            self.train_data[img_id].update({
+                'score_map': score_map,
+                'score_map_r': score_map_r,
+                'des_map': des_map,
+                'des_map_r': des_map_r
+            }   )

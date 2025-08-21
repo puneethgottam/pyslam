@@ -349,7 +349,8 @@ if __name__ == "__main__":
     # here we save the online estimated trajectory
     if online_trajectory_writer:
         online_trajectory_writer.close_file()
-    
+    if config.training_settings['save_data']:
+        np.savez_compressed(config.training_settings['file_path'],slam.train_data)
     # compute metrics on the estimated final trajectory 
     try: 
         est_poses, timestamps, ids = slam.get_final_trajectory()

@@ -1,14 +1,14 @@
 DATASET:
   # select your dataset (decomment only one of the following lines) 
   #type: EUROC_DATASET  
-  # type: KITTI_DATASET
+  type: KITTI_DATASET
   #type: TUM_DATASET
   #type: ICL_NUIM_DATASET
   #type: REPLICA_DATASET
   #type: TARTANAIR_DATASET
   # type: VIDEO_DATASET
   #type: SCANNET_DATASET
-  type: ROS1BAG_DATASET
+  # type: ROS1BAG_DATASET
   #type: ROS2BAG_DATASET  
   #type: FOLDER_DATASET
   #type: LIVE_DATASET  # Not recommended for current development stage
@@ -253,4 +253,10 @@ GLOBAL_PARAMETERS:
   #kUseVolumetricIntegration: True
   #kVolumetricIntegrationUseDepthEstimator: True
   #kLogsFolder: /tmp/pyslam_logs       # to redirect the prints of SLAM to the set folder
-  
+
+TRAINING_DATA:
+  # This section is used for training data collection for feature tracking adaptation
+  save_data: True # flag to enable training data collection
+  folder: /workspace/data/results/training_data # relative to pyslam root folder 
+  file: training_data.npz # file name of the training data file
+  max_training_data_size: 1000 # maximum number of training data samples to collect

@@ -101,6 +101,7 @@ class SuperPointFeature2D(BaseFeature2D):
         self.heatmap = [] 
         self.frame = None 
         self.frameFloat = None 
+        self.des_map = None  # keypoint descriptors map (for training purposes) [NxD] where D is the descriptor length
         self.keypoint_size = 20  # just a representative size for visualization and in order to convert extracted points to cv2.KeyPoint 
           
     # compute both keypoints and descriptors       
@@ -108,13 +109,13 @@ class SuperPointFeature2D(BaseFeature2D):
         with self.lock: 
             self.frame = frame 
             self.frameFloat  = (frame.astype('float32') / 255.)
-            self.pts, self.des, self.heatmap = self.fe.run(self.frameFloat)
+            self.pts, self.des, self.heatmap, self.des_map = self.fe.run(self.frameFloat)
             # N.B.: pts are - 3xN numpy array with corners [x_i, y_i, confidence_i]^T.
             #print('pts: ', self.pts.T)
             self.kps = convert_superpts_to_keypoints(self.pts.T, size=self.keypoint_size)
             if kVerbose:
                 print('detector: SUPERPOINT, #features: ', len(self.kps), ', frame res: ', frame.shape[0:2])      
-            return self.kps, transpose_des(self.des), self.heatmap               
+            return self.kps, transpose_des(self.des), self.heatmap, self.des_map               
             
     # return keypoints if available otherwise call detectAndCompute()    
     def detect(self, frame, mask=None):  # mask is a fake input  
