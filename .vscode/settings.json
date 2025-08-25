@@ -83,5 +83,6 @@
     "valarray": "cpp",
     "variant": "cpp"
   },
-  "commentTranslate.hover.enabled": false
+  "commentTranslate.hover.enabled": false,
+  "cmake.sourceDirectory": "/home/puneeth/Desktop/projects/git/pyslam/cpp"
 }

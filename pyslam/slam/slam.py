@@ -93,7 +93,9 @@ class Slam(object):
         self.environment_type = environment_type
         self.slam_mode = slam_mode
         self.headless = headless
-        self.train_data = {} # used for training data collection for feature tracking adaptation  
+        self.train_data = {
+            'frame_ids': [],
+        } # used for training data collection for feature tracking adaptation  
         self.feature_tracker = None
         self.init_feature_tracker(feature_tracker_config)
         
@@ -447,18 +449,8 @@ class Slam(object):
         """
         Add training data for feature tracking adaptation.
         """
-        if img_id not in self.train_data:
-            self.train_data[img_id] = {
-                'score_map': score_map,
-                'score_map_r': score_map_r,
-                'des_map': des_map,
-                'des_map_r': des_map_r
-            }
-        else:
-            # If the image ID already exists, update the data
-            self.train_data[img_id].update({
-                'score_map': score_map,
-                'score_map_r': score_map_r,
-                'des_map': des_map,
-                'des_map_r': des_map_r
-            }   )
+        self.train_data['frame_ids'].append(img_id)
+        self.train_data[f'score_map_{img_id:06d}'] = score_map.astype(np.float32)
+        self.train_data[f'score_map_r_{img_id:06d}'] = score_map_r.astype(np.float32)
+        self.train_data[f'des_map_{img_id:06d}'] = des_map.astype(np.float32)
+        self.train_data[f'des_map_r_{img_id:06d}'] = des_map_r.astype(np.float32)

@@ -1042,7 +1042,7 @@ class Tracking:
             f_cur.is_blurry = True
             f_cur.laplacian_var = f_cur_laplacian_var
         if self.slam.config.training_settings['save_data']:
-            self.slam.add_training_data(img_id, self.f_cur.score_map, self.f_cur.score_map_r, self.f_cur.des_map, self.f_cur.des_map_r)    
+            self.slam.add_training_data(img_id, self.f_cur.score_map, self.f_cur.score_map_r, self.f_cur.des_map, self.f_cur.des_map_r)
         #print("frame: ", f_cur.id)        
         self.timer_frame.refresh()   
         

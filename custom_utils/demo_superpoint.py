@@ -281,7 +281,7 @@ class SuperPointFrontend(object):
       desc = torch.nn.functional.grid_sample(coarse_desc, samp_pts)
       desc = desc.data.cpu().numpy().reshape(D, -1)
       desc /= np.linalg.norm(desc, axis=0)[np.newaxis, :]
-    return pts, desc, heatmap, coarse_desc
+    return pts, desc, heatmap, coarse_desc.data.cpu().numpy()
 
 
 class PointTracker(object):

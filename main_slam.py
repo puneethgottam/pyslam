@@ -289,6 +289,9 @@ if __name__ == "__main__":
                     
                 img_id += 1 
                 num_frames += 1
+                if config.training_settings['save_data'] and img_id>=dataset.num_frames:
+                    Printer.purple(f'saving training data to: {config.training_settings["file_path"]}')
+                    np.savez_compressed(config.training_settings['file_path'],**slam.train_data)
             else: 
                 time.sleep(0.1)     # img is None
                 if args.headless:
@@ -349,8 +352,7 @@ if __name__ == "__main__":
     # here we save the online estimated trajectory
     if online_trajectory_writer:
         online_trajectory_writer.close_file()
-    if config.training_settings['save_data']:
-        np.savez_compressed(config.training_settings['file_path'],slam.train_data)
+    
     # compute metrics on the estimated final trajectory 
     try: 
         est_poses, timestamps, ids = slam.get_final_trajectory()

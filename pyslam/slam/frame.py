@@ -486,6 +486,8 @@ class Frame(FrameBase):
                             # SuperPoint returns keypoints, descriptors and heatmap
                             self.kps, self.des, self.score_map, self.des_map = future_l.result()
                             self.kps_r, self.des_r, self.score_map_r, self.des_map_r = future_r.result()
+                            # self.kps, self.des, self.score_map, _ = future_l.result()
+                            # self.kps_r, self.des_r, self.score_map_r, _ = future_r.result()
                             x= [int(point.pt[0]) for point in self.kps]
                             y= [int(point.pt[1]) for point in self.kps]
                             self.scores = self.score_map[y,x]
@@ -600,7 +602,7 @@ class Frame(FrameBase):
                 'fov_center_w': json.dumps(NumpyJson.numpy_to_json(self.fov_center_w)) if self.fov_center_w is not None else None,
                 
                 'is_blurry': bool(self.is_blurry),
-                'laplacian_var': float(self.laplacian_var),
+                'laplacian_var': float(self.laplacian_var) if self.laplacian_var is not None else None,
                 
                 'kps': json.dumps(self.kps.astype(float).tolist()) if self.kps is not None else None,
                 'kps_r': json.dumps(self.kps_r.astype(float).tolist() if self.kps_r is not None else None),
